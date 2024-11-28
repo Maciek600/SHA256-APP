@@ -1,25 +1,23 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SHA256_APP
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
-        [DllImport]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
+            // Inicjalizacja aplikacji (formy)
             ApplicationConfiguration.Initialize();
             Application.Run(new Form1());
+
+            // Po zamkniêciu formy, przetwarzanie plików
+            Console.WriteLine("Wybierz implementacjê: ASM lub C#");
+            string library = Console.ReadLine()?.ToUpper() == "ASM" ? "ASM" : "C#";
+
+            // Uruchomienie logiki przetwarzania plików
+            MainProgram.ProcessFiles(library);
         }
     }
 }
