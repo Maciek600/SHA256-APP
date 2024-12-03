@@ -1,8 +1,13 @@
+using System.Collections.Concurrent;
+using System.Text;
+
 namespace SHA256_APP
 {
     public partial class Form1 : Form
     {
         private string[] inputFilePaths = Array.Empty<string>(); // Tablica z nazwami wybranych plików
+
+        private int threadCount = 1; //domyœlna wartoœæ na razie
 
 
         // Tablica wartoœci odpowiadaj¹cych pozycjom TrackBar
@@ -35,22 +40,22 @@ namespace SHA256_APP
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     // Pobranie œcie¿ek do wybranych plików
-                    string[] filePaths = openFileDialog.FileNames;
+                    inputFilePaths = openFileDialog.FileNames;
 
                     // Wyœwietlenie wszystkich wybranych plików (dla debugowania lub informacji)
-                    string fileList = string.Join("\n", filePaths);
+                    string fileList = string.Join("\n", inputFilePaths);
                     MessageBox.Show($"Selected files:\n{fileList}", "Files Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    // Mo¿esz zapisaæ œcie¿ki do zmiennej globalnej lub przetwarzaæ je dalej
                 }
             }
         }
 
+
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
-            // Wyœwietlanie aktualnej wartoœci na podstawie indeksu
-            labelTrackBarValue.Text = threadValues[trackBar1.Value].ToString();
+            threadCount = threadValues[trackBar1.Value];  // Ustawienie odpowiedniej liczby w¹tków
+            labelTrackBarValue.Text = threadCount.ToString();  // Wyœwietlenie wartoœci na etykiecie
         }
+
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
@@ -64,36 +69,88 @@ namespace SHA256_APP
 
         private void button2_Click(object sender, EventArgs e)
         {
-            // 1. Sprawdzenie, czy wybrano pliki wejœciowe
-            if (inputFilePaths.Length == 0)
+            if (inputFilePaths == null || inputFilePaths.Length == 0)
             {
                 MessageBox.Show("Please select at least one input file.", "Input File Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // 2. Sprawdzenie, czy wybrano bibliotekê (RadioButton)
             if (!radioButton1.Checked && !radioButton2.Checked)
             {
                 MessageBox.Show("Please select a library (ASM or x64).", "Library Selection Missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // 3. Pobranie iloœci w¹tków
-            int selectedThreads = threadValues[trackBar1.Value];
+            string selectedLibrary = radioButton1.Checked ? "asm" : "cs";
+            int selectedThreads = threadValues[trackBar1.Value]; // Liczba w¹tków wybrana z TrackBar
 
-            // 4. Sprawdzenie, która biblioteka zosta³a wybrana
-            string selectedLibrary = radioButton1.Checked ? "ASM" : "x64";
+            // Podzia³ plików na grupy
+            var fileGroups = SplitFilesIntoGroups(inputFilePaths, selectedThreads);
 
-            // 5. Wyœwietlenie wyników (lub przekazanie ich do innej funkcji)
-            string message = $"Starting app with:\n" +
-                             $"- Selected Library: {selectedLibrary}\n" +
-                             $"- Number of Threads: {selectedThreads}\n" +
-                             $"- Input Files: {string.Join(", ", inputFilePaths)}";
+            // Kolekcja wyników
+            ConcurrentDictionary<string, string> results = new ConcurrentDictionary<string, string>();
 
-            MessageBox.Show(message, "App Started", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Przygotowanie paska postêpu
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = inputFilePaths.Length;
+            progressBar1.Value = 0;
 
-            // Mo¿esz tu wywo³aæ logikê przetwarzania danych
+            // Lista zadañ Task
+            List<Task> tasks = new List<Task>();
+
+            foreach (var group in fileGroups)
+            {
+                tasks.Add(Task.Run(() =>
+                {
+                    foreach (string filePath in group)
+                    {
+                        string content = File.ReadAllText(filePath);
+                        string hash = SHA256App.SHA256.ComputeHash(content, selectedLibrary);
+                        results[filePath] = hash;
+
+                        // Zapis pliku wyjœciowego na pulpicie
+                        string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                        string fileName = Path.GetFileNameWithoutExtension(filePath);
+                        string extension = Path.GetExtension(filePath);
+                        string outputFilePath = Path.Combine(desktopPath, $"{fileName}X{extension}");
+                        File.WriteAllText(outputFilePath, hash);
+
+                        // Aktualizacja paska postêpu w w¹tku GUI
+                        Invoke(new Action(() => progressBar1.Value++));
+                    }
+                }));
+            }
+
+            // Oczekiwanie na zakoñczenie wszystkich zadañ
+            Task.WaitAll(tasks.ToArray());
+
+            // Wyœwietlenie wyników
+            StringBuilder sb = new StringBuilder();
+            foreach (var result in results)
+            {
+                sb.AppendLine($"File: {result.Key}\nHash: {result.Value}\n");
+            }
+
+            MessageBox.Show(sb.ToString(), "Hashes Computed", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
+
+        private List<List<string>> SplitFilesIntoGroups(string[] filePaths, int numberOfGroups)
+        {
+            List<List<string>> groups = new List<List<string>>();
+            for (int i = 0; i < numberOfGroups; i++)
+            {
+                groups.Add(new List<string>());
+            }
+
+            for (int i = 0; i < filePaths.Length; i++)
+            {
+                groups[i % numberOfGroups].Add(filePaths[i]);
+            }
+
+            return groups;
+        }
+
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -101,6 +158,11 @@ namespace SHA256_APP
         }
 
         private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void progressBar1_Click(object sender, EventArgs e)
         {
 
         }

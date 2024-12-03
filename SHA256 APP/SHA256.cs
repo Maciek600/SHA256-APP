@@ -161,7 +161,7 @@ namespace SHA256App
         }
     }
 
-    class Program
+    /*class Program
     {
         static void Main(string[] args)
         {
@@ -175,5 +175,5 @@ namespace SHA256App
             string hash = SHA256.ComputeHash(input, libType);
             Console.WriteLine($"SHA-256 Hash: {hash}");
         }
-    }
+    }*/
 }

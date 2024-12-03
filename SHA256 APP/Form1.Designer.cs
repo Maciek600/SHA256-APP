@@ -37,6 +37,7 @@
             groupBox1 = new GroupBox();
             groupBox2 = new GroupBox();
             labelTrackBarValue = new Label();
+            progressBar1 = new ProgressBar();
             ((System.ComponentModel.ISupportInitialize)trackBar1).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -136,11 +137,20 @@
             labelTrackBarValue.Text = "labelTrackBarValue";
             labelTrackBarValue.Click += label1_Click;
             // 
+            // progressBar1
+            // 
+            progressBar1.Location = new Point(332, 291);
+            progressBar1.Name = "progressBar1";
+            progressBar1.Size = new Size(125, 29);
+            progressBar1.TabIndex = 10;
+            progressBar1.Click += progressBar1_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(progressBar1);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Controls.Add(button3);
@@ -167,5 +177,6 @@
         private GroupBox groupBox1;
         private GroupBox groupBox2;
         private Label labelTrackBarValue;
+        private ProgressBar progressBar1;
     }
 }

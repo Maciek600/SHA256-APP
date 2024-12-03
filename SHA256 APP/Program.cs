@@ -8,16 +8,9 @@ namespace SHA256_APP
         [STAThread]
         static void Main()
         {
-            // Inicjalizacja aplikacji (formy)
+            // Inicjalizacja aplikacji okienkowej
             ApplicationConfiguration.Initialize();
             Application.Run(new Form1());
-
-            // Po zamkniêciu formy, przetwarzanie plików
-            Console.WriteLine("Wybierz implementacjê: ASM lub C#");
-            string library = Console.ReadLine()?.ToUpper() == "ASM" ? "ASM" : "C#";
-
-            // Uruchomienie logiki przetwarzania plików
-            MainProgram.ProcessFiles(library);
         }
     }
 }
