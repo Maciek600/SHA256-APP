@@ -33,11 +33,26 @@ namespace SHA256App
         };
 
         // Deklaracje funkcji w asemblerze
-        [DllImport("SHA256Asm.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Users\macie\source\repos\SHA256 APP\x64\Debug\JAAsm.dll")]
         public static extern uint Sigma0Asm(uint x);
 
-        [DllImport("SHA256Asm.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Users\macie\source\repos\SHA256 APP\x64\Debug\JAAsm.dll")]
         public static extern uint Sigma1Asm(uint x);
+
+        [DllImport(@"C:\Users\macie\source\repos\SHA256 APP\x64\Debug\JAAsm.dll")]
+        public static extern uint BigSigma0Asm(uint x);
+
+        [DllImport(@"C:\Users\macie\source\repos\SHA256 APP\x64\Debug\JAAsm.dll")]
+        public static extern uint BigSigma1Asm(uint x);
+
+        [DllImport(@"C:\Users\macie\source\repos\SHA256 APP\x64\Debug\JAAsm.dll")]
+        public static extern uint ChAsm(uint x, uint y, uint z);
+
+        [DllImport(@"C:\Users\macie\source\repos\SHA256 APP\x64\Debug\JAAsm.dll")]
+        public static extern uint MajAsm(uint x, uint y, uint z);
+
+        [DllImport(@"C:\Users\macie\source\repos\SHA256 APP\x64\Debug\JAAsm.dll")]
+        public static extern uint ROTRAsm(uint x, int n);
 
         public static string ComputeHash(string input, string libraryType = "cs")
         {
@@ -53,10 +68,15 @@ namespace SHA256App
 
                 for (int j = 16; j < 64; j++)
                 {
-                    // Wybór implementacji Sigma0/Sigma1 na podstawie argumentu libraryType
-                    w[j] = (libraryType == "asm")
-                        ? Sigma1Asm(w[j - 2]) + w[j - 7] + Sigma0Asm(w[j - 15]) + w[j - 16]
-                        : Sigma1(w[j - 2]) + w[j - 7] + Sigma0(w[j - 15]) + w[j - 16];
+                    if (libraryType == "asm")
+                    {
+                        w[j] = Sigma1Asm(w[j - 2]) + w[j - 7] + Sigma0Asm(w[j - 15]) + w[j - 16];
+                    }
+                    else
+                    {
+                        w[j] = Sigma1(w[j - 2]) + w[j - 7] + Sigma0(w[j - 15]) + w[j - 16];
+                    }
+
                 }
 
                 uint a = hashValues[0];
@@ -70,8 +90,18 @@ namespace SHA256App
 
                 for (int j = 0; j < 64; j++)
                 {
-                    uint t1 = h + BigSigma1(e) + Ch(e, f, g) + K[j] + w[j];
-                    uint t2 = BigSigma0(a) + Maj(a, b, c);
+                    uint t1, t2;
+
+                    if (libraryType == "asm")
+                    {
+                        t1 = h + BigSigma1Asm(e) + ChAsm(e, f, g) + K[j] + w[j];
+                        t2 = BigSigma0Asm(a) + MajAsm(a, b, c);
+                    }
+                    else
+                    {
+                        t1 = h + BigSigma1(e) + Ch(e, f, g) + K[j] + w[j];
+                        t2 = BigSigma0(a) + Maj(a, b, c);
+                    }
                     h = g;
                     g = f;
                     f = e;

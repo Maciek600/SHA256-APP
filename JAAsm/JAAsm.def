@@ -1,0 +1,10 @@
+LIBRARY JAAsm
+
+EXPORTS
+    ROTRAsm
+    Sigma0Asm
+    Sigma1Asm
+    BigSigma0Asm
+    BigSigma1Asm
+    ChAsm
+    MajAsm

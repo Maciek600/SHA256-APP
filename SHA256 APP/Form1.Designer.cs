@@ -78,10 +78,10 @@
             radioButton2.AutoSize = true;
             radioButton2.Location = new Point(17, 86);
             radioButton2.Name = "radioButton2";
-            radioButton2.Size = new Size(53, 24);
+            radioButton2.Size = new Size(48, 24);
             radioButton2.TabIndex = 5;
             radioButton2.TabStop = true;
-            radioButton2.Text = "x64";
+            radioButton2.Text = "C#";
             radioButton2.UseVisualStyleBackColor = true;
             radioButton2.CheckedChanged += radioButton2_CheckedChanged;
             // 
