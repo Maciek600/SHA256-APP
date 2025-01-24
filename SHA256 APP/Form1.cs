@@ -12,18 +12,45 @@ namespace SHA256_APP
 
         // Tablica wartoœci odpowiadaj¹cych pozycjom TrackBar
         private readonly int[] threadValues = { 1, 2, 4, 8, 16, 32, 64 };
+        private int defultThreads;
         public Form1()
         {
             InitializeComponent();
+
+            // Pobranie liczby logicznych procesorów
+            defultThreads = Environment.ProcessorCount;
+
             // Inicjalizacja TrackBar
             trackBar1.Minimum = 0; // Indeks w tablicy threadValues
             trackBar1.Maximum = threadValues.Length - 1; // Ostatni indeks
-            trackBar1.Value = 0; // Domyœlna wartoœæ (pierwszy element: 1)
+
+            // Znalezienie najbli¿szego indeksu dla defultThreads
+            int defaultIndex = FindClosestThreadIndex(defultThreads);
+
+            // Ustawienie wartoœci TrackBar na znaleziony indeks
+            trackBar1.Value = defaultIndex;
 
             // Wyœwietlenie wartoœci na starcie
             labelTrackBarValue.Text = threadValues[trackBar1.Value].ToString();
         }
+        // Funkcja do znalezienia indeksu najbli¿szej wartoœci w threadValues
+        private int FindClosestThreadIndex(int threadCount)
+        {
+            int closestIndex = 0;
+            int minDifference = int.MaxValue;
 
+            for (int i = 0; i < threadValues.Length; i++)
+            {
+                int difference = Math.Abs(threadValues[i] - threadCount);
+                if (difference < minDifference)
+                {
+                    minDifference = difference;
+                    closestIndex = i;
+                }
+            }
+
+            return closestIndex;
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {

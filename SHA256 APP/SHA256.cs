@@ -149,61 +149,26 @@ namespace SHA256App
         }
 
         // Funkcja pomocnicza dla operacji ROTR
-        private static uint ROTR(uint x, int n)
-        {
-            return (x >> n) | (x << (32 - n));
-        }
+        private static uint ROTR(uint x, int n){return (x >> n) | (x << (32 - n));}
 
         // Funkcja pomocnicza dla operacji Σ0
-        private static uint Sigma0(uint x)
-        {
-            return ROTR(x, 7) ^ ROTR(x, 18) ^ (x >> 3);
-        }
+        private static uint Sigma0(uint x){return ROTR(x, 7) ^ ROTR(x, 18) ^ (x >> 3);}
 
         // Funkcja pomocnicza dla operacji Σ1
-        private static uint Sigma1(uint x)
-        {
-            return ROTR(x, 17) ^ ROTR(x, 19) ^ (x >> 10);
-        }
+        private static uint Sigma1(uint x){return ROTR(x, 17) ^ ROTR(x, 19) ^ (x >> 10);}
 
         // Funkcja pomocnicza dla operacji Maj
-        private static uint Maj(uint x, uint y, uint z)
-        {
-            return (x & y) ^ (x & z) ^ (y & z);
-        }
+        private static uint Maj(uint x, uint y, uint z){return (x & y) ^ (x & z) ^ (y & z);}
 
         // Funkcja pomocnicza dla operacji Ch
-        private static uint Ch(uint x, uint y, uint z)
-        {
-            return (x & y) ^ (~x & z);
-        }
+        private static uint Ch(uint x, uint y, uint z){return (x & y) ^ (~x & z);}
 
         // Funkcja pomocnicza dla operacji Σ
-        private static uint BigSigma0(uint x)
-        {
-            return ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22);
-        }
+        private static uint BigSigma0(uint x){return ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22);}
 
         // Funkcja pomocnicza dla operacji Σ1
-        private static uint BigSigma1(uint x)
-        {
-            return ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25);
-        }
+        private static uint BigSigma1(uint x){return ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25);}
     }
 
-    /*class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.Write("Enter text to hash: ");
-            string input = Console.ReadLine();
 
-            // Wybór biblioteki (C# vs ASM)
-            Console.Write("Enter 'cs' for C# or 'asm' for ASM implementation: ");
-            string libType = Console.ReadLine();
-
-            string hash = SHA256.ComputeHash(input, libType);
-            Console.WriteLine($"SHA-256 Hash: {hash}");
-        }
-    }*/
 }
