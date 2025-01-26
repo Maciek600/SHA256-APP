@@ -132,6 +132,7 @@ namespace SHA256_APP
                     foreach (string filePath in group)
                     {
                         string content = File.ReadAllText(filePath);
+                        //string content = "Hello World!";
                         string hash = SHA256App.SHA256.ComputeHash(content, selectedLibrary);
                         results[filePath] = hash;
 
@@ -158,7 +159,7 @@ namespace SHA256_APP
                 sb.AppendLine($"File: {result.Key}\nHash: {result.Value}\n");
             }
 
-            MessageBox.Show(sb.ToString(), "Hashes Computed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Hashes Computed","", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
 
