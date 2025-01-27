@@ -1,3 +1,5 @@
+using Sha;
+using SHA256App;
 using System.Collections.Concurrent;
 using System.Text;
 
@@ -5,6 +7,7 @@ namespace SHA256_APP
 {
     public partial class Form1 : Form
     {
+        SHA256 sha256 = new SHA256();
         private string[] inputFilePaths = Array.Empty<string>(); // Tablica z nazwami wybranych plików
 
         private int threadCount = 1; //domyœlna wartoœæ na razie
@@ -133,7 +136,7 @@ namespace SHA256_APP
                     {
                         string content = File.ReadAllText(filePath);
                         //string content = "Hello World!";
-                        string hash = SHA256App.SHA256.ComputeHash(content, selectedLibrary);
+                        string hash = sha256.ComputeHash(content, selectedLibrary);
                         results[filePath] = hash;
 
                         // Zapis pliku wyjœciowego na pulpicie
