@@ -130,7 +130,7 @@
             // labelTrackBarValue
             // 
             labelTrackBarValue.AutoSize = true;
-            labelTrackBarValue.Location = new Point(191, 86);
+            labelTrackBarValue.Location = new Point(141, 88);
             labelTrackBarValue.Name = "labelTrackBarValue";
             labelTrackBarValue.Size = new Size(134, 20);
             labelTrackBarValue.TabIndex = 1;
@@ -177,6 +177,7 @@
         private GroupBox groupBox1;
         private GroupBox groupBox2;
         private Label labelTrackBarValue;
+        private Label labelElapsedTime;
         private ProgressBar progressBar1;
     }
 }
