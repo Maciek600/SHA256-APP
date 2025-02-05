@@ -126,23 +126,10 @@ namespace SHA256App
                     }
                    // UInt32 ch = (libraryType == "asm") ? ChAsm(ref e, ref f, ref g) : sha.Ch(e, f, g);
                     UInt32 temp1 = h + S1 + ch + K[i] + w[i];
-                    /*UInt32 S0;
-                    if(libraryType == "asm") {
-                        UInt32 aa = a;
-                        BigSigma0Asm(ref aa);
-                        S0 = aa;
-                    } else
-                    {
-                        S0 = sha.BigSigma0(a);
-                    }*/
                     UInt32 S0 = (libraryType == "asm") ? BigSigma0Asm(a) : sha.BigSigma0(a);
-                    //uint maj = (libraryType == "asm") ? MajAsm(a, b, c) : sha.Maj(a, b, c);
                     UInt32 maj;
                     if(libraryType == "asm")
                     {
-                        /*UInt32 temp = a;
-                        maj = temp;
-                        MajAsm(ref maj, ref b, ref c);*/
                         maj = MajAsm(a, b, c);
                     }
                     else

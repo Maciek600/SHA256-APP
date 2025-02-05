@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SHA256 APP": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
