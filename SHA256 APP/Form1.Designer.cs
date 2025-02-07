@@ -158,6 +158,7 @@
             Controls.Add(button1);
             Name = "Form1";
             Text = "Form1";
+            Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)trackBar1).EndInit();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();

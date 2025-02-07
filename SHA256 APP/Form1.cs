@@ -3,9 +3,20 @@ using SHA256App;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text;
-
+/// <summary>
+/// SHA256 Calculator Application
+/// Author: Maciej Fajlhauer
+/// Group: 1
+/// Date: February 2024
+/// Version: 1.0
+/// Description: Multi-threaded SHA256 hash calculator with support for ASM and C# implementations
+/// </summary>
 namespace SHA256_APP
 {
+    /// <summary>
+    /// Main form class for the SHA256 hashing application.
+    /// Provides functionality for file selection, thread configuration, and hash computation.
+    /// </summary>
     public partial class Form1 : Form
     {
         SHA256 sha256 = new SHA256();
@@ -19,6 +30,10 @@ namespace SHA256_APP
             17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
             40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64 };
         private int defultThreads;
+
+        /// <summary>
+        /// Initializes the form and configures initial settings for thread selection.
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
@@ -41,7 +56,11 @@ namespace SHA256_APP
 
         }
 
-        // Funkcja do znalezienia indeksu najbli¿szej wartoœci w threadValues
+        /// <summary>
+        /// Finds the index of the closest thread count value in the threadValues array.
+        /// </summary>
+        /// <param name="threadCount">Target thread count to match</param>
+        /// <returns>Index of the closest matching thread count</returns>
         private int FindClosestThreadIndex(int threadCount)
         {
             int closestIndex = 0;
@@ -59,7 +78,10 @@ namespace SHA256_APP
 
             return closestIndex;
         }
-
+        /// <summary>
+        /// Handles file selection button click event.
+        /// Opens a file dialog for selecting input files to process.
+        /// </summary>
         private void button1_Click(object sender, EventArgs e)
         {
             // Tworzymy okno dialogowe
@@ -84,7 +106,9 @@ namespace SHA256_APP
             }
         }
 
-
+        /// <summary>
+        /// Updates thread count when TrackBar value changes.
+        /// </summary>
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
             threadCount = threadValues[trackBar1.Value];  // Ustawienie odpowiedniej liczby w¹tków
@@ -101,7 +125,10 @@ namespace SHA256_APP
         {
 
         }
-
+        /// <summary>
+        /// Processes selected files using chosen settings and computes SHA256 hashes.
+        /// Handles multi-threaded processing and progress tracking.
+        /// </summary>
         private async void button2_Click(object sender, EventArgs e)
         {
             if (inputFilePaths == null || inputFilePaths.Length == 0)
@@ -225,7 +252,12 @@ namespace SHA256_APP
                            MessageBoxIcon.Information);
         }
 
-
+        /// <summary>
+        /// Splits input files into groups for parallel processing.
+        /// </summary>
+        /// <param name="filePaths">Array of file paths to process</param>
+        /// <param name="numberOfGroups">Number of groups to create (equal to thread count)</param>
+        /// <returns>List of file path groups for parallel processing</returns>
         private List<List<string>> SplitFilesIntoGroups(string[] filePaths, int numberOfGroups)
         {
             // Nie tworzymy wiêcej grup ni¿ mamy plików
@@ -273,7 +305,10 @@ namespace SHA256_APP
     (@"C:\TestFiles\Set50k", 50000),
     (@"C:\TestFiles\Set70k", 70000)
 };
-
+        /// <summary>
+        /// Performs comprehensive performance testing of SHA256 implementation.
+        /// Tests different thread counts and libraries across multiple file sets.
+        /// </summary>
         private async void button3_Click(object sender, EventArgs e)
         {
             // Results StringBuilder
@@ -393,6 +428,11 @@ namespace SHA256_APP
         }
 
         private void label1_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
         {
 
         }

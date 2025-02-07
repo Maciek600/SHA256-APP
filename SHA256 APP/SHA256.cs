@@ -4,9 +4,18 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Linq;
 using Sha;
-
+// <author>Maciej Fajlhauer</author>
+// <date>2024/2025</date>
+// <version>1.0</version>
+// <summary>
+// Implementation of the SHA256 hashing algorithm with support for both
+// C# and Assembly implementations of core operations.
+// </summary>
 namespace SHA256App
 {
+    /// <summary>
+    /// Provides SHA256 hash computation functionality with support for both C# and Assembly implementations.
+    /// </summary>
     public class SHA256
     {
         Class1 sha = new Class1();
@@ -36,8 +45,9 @@ namespace SHA256App
             0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
         };
 
-        // Assembly function imports remain the same...
-        // Deklaracje funkcji w asemblerze
+        /// <summary>
+        /// Assembly implementation of the σ0 function.
+        /// </summary>
         [DllImport(@"C:\Users\macie\source\repos\SHA256 APP\x64\Debug\JAAsm.dll")]
         public static extern void Sigma0Asm(ref UInt32 x);
 
@@ -59,7 +69,12 @@ namespace SHA256App
         [DllImport(@"C:\Users\macie\source\repos\SHA256 APP\x64\Debug\JAAsm.dll")]
         public static extern UInt32 ROTRAsm(UInt32 x, byte n);
 
-
+        /// <summary>
+        /// Computes the SHA256 hash of the input string using either C# or Assembly implementation.
+        /// </summary>
+        /// <param name="input">The input string to hash</param>
+        /// <param name="libraryType">The implementation to use: "cs" for C# or "asm" for Assembly</param>
+        /// <returns>The computed hash as a hexadecimal string</returns>
         public string ComputeHash(string input, string libraryType = "cs")
         {
             byte[] data = Encoding.UTF8.GetBytes(input);
@@ -163,6 +178,18 @@ namespace SHA256App
             return string.Concat(hashValues.Select(value => value.ToString("x8")));
         }
 
+        /// <summary>
+        /// Pads the input data according to SHA256 specifications.
+        /// </summary>
+        /// <param name="data">The input data to pad</param>
+        /// <returns>The padded data as a byte array</returns>
+        /// <remarks>
+        /// Padding rules:
+        /// 1. Append a single '1' bit
+        /// 2. Append K '0' bits, where K is the minimum number >= 0 such that the resulting message
+        ///    length (in bits) is congruent to 448 (mod 512)
+        /// 3. Append the message length as a 64-bit big-endian integer
+        /// </remarks>
         private static byte[] PadData(byte[] data)
         {
             int originalLength = data.Length;

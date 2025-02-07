@@ -1,3 +1,11 @@
+;----------------------------
+;   JA PROJEKT
+;   SHA-256 ASM
+;   autor: Maciej Fajlhauer
+;   INF-KTW 1/5
+;   ROK AKADEMICKI 2024-25
+;----------------------------
+
 .code
 PUBLIC Sigma0Asm
 PUBLIC Sigma1Asm
@@ -119,70 +127,64 @@ BigSigma1Asm PROC
 BigSigma1Asm ENDP
 
 ChAsm PROC
-    push rbx
+    push rbx                        ; Zachowanie rejestru rbx na stosie
     
-    ; Za³aduj wartoœci z pamiêci (przez referencjê)
-    mov ebx, [rcx]     ; x
-    mov eax, [rdx]     ; y
-    mov r8d, [r8]      ; z
+    ; £adowanie argumentów z pamiêci
+    mov ebx, [rcx]                  ; Pierwszy argument (x) do ebx
+    mov eax, [rdx]                  ; Drugi argument (y) do eax
+    mov r8d, [r8]                   ; Trzeci argument (z) do r8d
     
-    ; Umieœæ wartoœci w xmm0
-    vmovd xmm0, ebx
-    vpinsrd xmm0, xmm0, eax, 1
-    vpinsrd xmm0, xmm0, r8d, 2
-
-    ; ~x 
-    vpcmpeqd xmm1, xmm1, xmm1   ; Ustaw wszystkie bity na 1
-    vpxor xmm1, xmm1, xmm0      ; ~x w xmm1
-
-    ; Oblicz (x & y)
-    vpsrldq xmm2, xmm0, 4       ; y na miejsce x
-    vpand xmm2, xmm2, xmm0      ; xmm2 = x & y
-
-    ; Oblicz (~x & z)
-    vpsrldq xmm3, xmm0, 8       ; z na miejsce x
-    vpand xmm1, xmm1, xmm3      ; xmm1 = ~x & z
-
-    ; Po³¹cz wyniki w xmm0
-    vpxor xmm0, xmm1, xmm2
-
+    ; Przygotowanie wartoœci w rejestrze XMM0
+    vmovd xmm0, ebx                 ; Przeniesienie x do xmm0
+    vpinsrd xmm0, xmm0, eax, 1      ; Dodanie y do xmm0[1]
+    vpinsrd xmm0, xmm0, r8d, 2      ; Dodanie z do xmm0[2]
     
-    vmovd eax, xmm0
-    mov [rcx], eax
-
-    pop rbx
-    ret
+    ; Obliczenie negacji x (~x)
+    vpcmpeqd xmm1, xmm1, xmm1       ; Wszystkie bity na 1 (for NOT operation)
+    vpxor xmm1, xmm1, xmm0          ; Negacja x w xmm1
+    
+    ; Obliczenie czêœci (x & y)
+    vpsrldq xmm2, xmm0, 4           ; Przesuniêcie y na pozycjê x
+    vpand xmm2, xmm2, xmm0          ; Wykonanie x & y
+    
+    ; Obliczenie czêœci (~x & z)
+    vpsrldq xmm3, xmm0, 8           ; Przesuniêcie z na pozycjê x
+    vpand xmm1, xmm1, xmm3          ; Wykonanie ~x & z
+    
+    ; Koñcowe obliczenie Ch(x,y,z) = (x & y) ^ (~x & z)
+    vpxor xmm0, xmm1, xmm2          ; Po³¹czenie wyników XORem
+    
+    ; Przygotowanie wyniku
+    vmovd eax, xmm0                 ; Przeniesienie wyniku do eax
+    mov [rcx], eax                  ; Zapisanie wyniku pod adresem pierwszego argumentu
+    pop rbx                         ; Przywrócenie rbx ze stosu
+    ret                            ; Powrót z procedury
 ChAsm ENDP
 
-
 MajAsm PROC
-    ; Za³aduj wartoœci do rejestru XMM0
-    vmovd xmm0, ecx
-    vpinsrd xmm0, xmm0, edx, 1
-    vpinsrd xmm0, xmm0, r8d, 2
+    ; Przygotowanie argumentów w XMM0
+    vmovd xmm0, ecx                 ; Przeniesienie x do xmm0
+    vpinsrd xmm0, xmm0, edx, 1      ; Dodanie y do xmm0[1]
+    vpinsrd xmm0, xmm0, r8d, 2      ; Dodanie z do xmm0[2]
     
-
-    ; Utwórz kopie wartoœci y i z
-    vpsrldq xmm1, xmm0, 4    ; y
-    vpsrldq xmm2, xmm0, 8    ; z
-
-    ; Oblicz x & y
-    vpand xmm3, xmm0, xmm1   ; xmm3 = x & y
-
-    ; Oblicz x & z
-    vpand xmm4, xmm0, xmm2   ; xmm4 = x & z
-
-    ; Oblicz y & z
-    vpand xmm5, xmm1, xmm2   ; xmm5 = y & z
-
-    ; Po³¹cz wyniki: (x & y) ^ (x & z) ^ (y & z)
-    vpxor xmm3, xmm3, xmm4   ; xmm3 = (x & y) ^ (x & z)
-    vpxor xmm0, xmm3, xmm5   ; xmm0 = (x & y) ^ (x & z) ^ (y & z)
-
-    ; Zwróæ wynik w eax
-    vmovd eax, xmm0
-    ret
+    ; Utworzenie kopii argumentów
+    vpsrldq xmm1, xmm0, 4           ; Kopia y
+    vpsrldq xmm2, xmm0, 8           ; Kopia z
+    
+    ; Obliczenie wszystkich kombinacji AND
+    vpand xmm3, xmm0, xmm1          ; x & y w xmm3
+    vpand xmm4, xmm0, xmm2          ; x & z w xmm4
+    vpand xmm5, xmm1, xmm2          ; y & z w xmm5
+    
+    ; Koñcowe obliczenie Maj(x,y,z) = (x & y) ^ (x & z) ^ (y & z)
+    vpxor xmm3, xmm3, xmm4          ; (x & y) ^ (x & z)
+    vpxor xmm0, xmm3, xmm5          ; Dodanie (y & z)
+    
+    ; Zwrócenie wyniku
+    vmovd eax, xmm0                 ; Przeniesienie wyniku do eax
+    ret                            ; Powrót z procedury
 MajAsm ENDP
+
 
 
 
