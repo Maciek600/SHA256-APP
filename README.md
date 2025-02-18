@@ -1,10 +1,8 @@
-Oto opis Twojej aplikacji w formacie Markdown w języku polskim i angielskim:  
 
----
 
 ## **Opis aplikacji – SHA256APP**  
 
-### **Polski**  
+### **PL**  
 
 SHA256APP to aplikacja umożliwiająca obliczanie wartości skrótu SHA-256 dla wybranych plików przy użyciu różnych implementacji algorytmu: w języku C# oraz asemblerze. Program pozwala na wybór liczby wątków, co umożliwia porównanie wydajności przetwarzania wielowątkowego.  
 
@@ -24,7 +22,7 @@ SHA256APP to aplikacja umożliwiająca obliczanie wartości skrótu SHA-256 dla 
 
 ---
 
-### **English**  
+### **ENG**  
 
 ## **Application Description – SHA256APP**  
 
